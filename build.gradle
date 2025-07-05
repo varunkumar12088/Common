@@ -1,11 +1,10 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.3'
+	id 'java-library'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.coursely.common'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	toolchain {
@@ -17,12 +16,28 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+dependencyManagement {
+	imports {
+		// ✅ Import Spring Boot BOM to resolve versions
+		mavenBom "org.springframework.boot:spring-boot-dependencies:3.2.4"
+	}
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+
+dependencies {
+	// Spring dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Utilities
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Test dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
