@@ -1,1 +1,1 @@
-# Coursely-Common
+# Common
