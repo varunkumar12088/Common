@@ -1,4 +1,4 @@
-package com.metaskillsacademy.common.config;
+package com.academy.common.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
