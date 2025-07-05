@@ -7,28 +7,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class RoleValidationInterceptor extends WebRequestHandlerInterceptorAdapter {
+public class RoleValidationInterceptor implements HandlerInterceptor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoleValidationInterceptor.class);;
     private static final String ROLE_HEADER = "X-USER-ROLE";
 
     private static final Map<String, UserRole> METHOD_PATH_MAP = new HashMap<>();
 
     @Autowired
     private UserRoleApiMapRepository userRoleApiMapRepository;
-
-
-    public RoleValidationInterceptor(WebRequestInterceptor requestInterceptor) {
-        super(requestInterceptor);
-    }
 
 
     @PostConstruct
@@ -42,6 +39,7 @@ public class RoleValidationInterceptor extends WebRequestHandlerInterceptorAdapt
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        LOGGER.debug("RoleValidationInterceptor preHandle called for request: {}", request.getRequestURI());
         String role = request.getHeader(ROLE_HEADER);
         if (StringUtils.isBlank(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
@@ -59,6 +57,7 @@ public class RoleValidationInterceptor extends WebRequestHandlerInterceptorAdapt
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to access this resource");
             return false;
         }
+        LOGGER.debug("Role {} has access to path: {}, method: {}", role, uri, method);
         return true;
     }
 
