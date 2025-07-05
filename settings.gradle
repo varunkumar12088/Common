@@ -1,2 +1,2 @@
-rootProject.name = 'Coursely-Common'
-include 'Coursely-Common'
+rootProject.name = 'Common'
+include 'Common'
