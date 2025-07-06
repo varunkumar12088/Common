@@ -3,7 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.coursely.common'
+group = 'com.academy.common'
 version = '0.0.1'
 
 java {
@@ -18,7 +18,7 @@ repositories {
 
 dependencyManagement {
 	imports {
-		// ✅ Import Spring Boot BOM to resolve versions
+		// Import Spring Boot BOM to resolve versions
 		mavenBom "org.springframework.boot:spring-boot-dependencies:3.2.4"
 	}
 }

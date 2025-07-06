@@ -49,64 +49,64 @@ public abstract class AbstractRestClient {
     }
 
 
-    public Class<?> get(Class<?> classz){
-        return get(classz, null);
+    public Class<?> get(Class<?> classType){
+        return get(classType, null);
     }
 
-    public Class<?> get(Class<?> classz, Map<String, String> queryParams) {
-         return get(classz, queryParams, null);
+    public Class<?> get(Class<?> classType, Map<String, String> queryParams) {
+         return get(classType, queryParams, null);
     }
 
-    public Class<?> get(Class<?> classz, Map<String, String> queryParams, Map<String, String> headers) {
+    public Class<?> get(Class<?> classType, Map<String, String> queryParams, Map<String, String> headers) {
 
-        return doGenericCall(classz, null, queryParams, headers, HttpMethod.GET);
+        return doGenericCall(classType, null, queryParams, headers, HttpMethod.GET);
     }
 
-    public Class<?> post(Class<?> classz, Object body){
-        return post(classz, body, null);
+    public Class<?> post(Class<?> classType, Object body){
+        return post(classType, body, null);
     }
 
-    public Class<?> post(Class<?> classz, Object body, Map<String, String> queryParams) {
-        return post(classz, body, queryParams, null);
+    public Class<?> post(Class<?> classType, Object body, Map<String, String> queryParams) {
+        return post(classType, body, queryParams, null);
     }
 
-    public Class<?> post(Class<?> classz, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-        return doGenericCall(classz, body, queryParams, headers, HttpMethod.POST);
+    public Class<?> post(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
+        return doGenericCall(classType, body, queryParams, headers, HttpMethod.POST);
     }
 
-    public Class<?> put(Class<?> classz, Object body){
-        return put(classz, body, null);
+    public Class<?> put(Class<?> classType, Object body){
+        return put(classType, body, null);
     }
-    public Class<?> put(Class<?> classz, Object body, Map<String, String> queryParams) {
-        return put(classz, body, queryParams, null);
-    }
-
-    public Class<?> put(Class<?> classz, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-
-        return doGenericCall(classz, body, queryParams, headers, HttpMethod.PUT);
+    public Class<?> put(Class<?> classType, Object body, Map<String, String> queryParams) {
+        return put(classType, body, queryParams, null);
     }
 
+    public Class<?> put(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
 
-    public Class<?> patch(Class<?> classz, Object body){
-        return patch(classz, body, null);
-    }
-
-    public Class<?> patch(Class<?> classz, Object body, Map<String, String> queryParams) {
-        return patch(classz, body, queryParams, null);
-    }
-
-    public Class<?> patch(Class<?> classz, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-        return doGenericCall(classz, body, queryParams, headers, HttpMethod.PATCH);
+        return doGenericCall(classType, body, queryParams, headers, HttpMethod.PUT);
     }
 
 
+    public Class<?> patch(Class<?> classType, Object body){
+        return patch(classType, body, null);
+    }
 
-    private Class<?> doGenericCall(Class<?> classz, Object body, Map<String, String> queryParams, Map<String, String> headers, HttpMethod httpMethod) {
+    public Class<?> patch(Class<?> classType, Object body, Map<String, String> queryParams) {
+        return patch(classType, body, queryParams, null);
+    }
+
+    public Class<?> patch(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
+        return doGenericCall(classType, body, queryParams, headers, HttpMethod.PATCH);
+    }
+
+
+
+    private Class<?> doGenericCall(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers, HttpMethod httpMethod) {
         String url = getFullUrl(queryParams);
         if (StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("URL cannot be null or empty");
         }
-        if (classz == null) {
+        if (classType == null) {
             throw new IllegalArgumentException("Class type cannot be null");
         }
 
@@ -124,7 +124,7 @@ public abstract class AbstractRestClient {
         }
         // Perform the REST call using RestTemplate
         try {
-            return getRestTemplate().exchange(url, httpMethod, requestEntity, classz.getClass()).getBody();
+            return getRestTemplate().exchange(url, httpMethod, requestEntity, classType.getClass()).getBody();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

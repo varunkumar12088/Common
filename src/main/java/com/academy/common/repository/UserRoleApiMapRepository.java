@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface UserRoleApiMapRepository extends MongoRepository<UserRoleApiMap, String> {
 
-    List<UserRoleApiMap> findByPAthAndMethod(String path, String method);
+    List<UserRoleApiMap> findByPathAndMethod(String path, String method);
 }
