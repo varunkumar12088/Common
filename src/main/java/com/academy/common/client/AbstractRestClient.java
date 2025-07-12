@@ -1,7 +1,9 @@
-package com.academy.common;
+package com.academy.common.client;
 
+import com.academy.common.constant.CommonConstant;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class AbstractRestClient {
 
@@ -41,6 +44,14 @@ public abstract class AbstractRestClient {
                 httpHeaders.add(entry.getKey(), entry.getValue());
             }
         }
+        // Add default headers if needed
+        httpHeaders.add(CommonConstant.CONTENT_TYPE, CommonConstant.APPLICATION_JSON);
+        httpHeaders.add(CommonConstant.ACCEPT, CommonConstant.APPLICATION_JSON);
+        String trackingId = MDC.get(CommonConstant.X_TRACKING_ID);
+        if(StringUtils.isBlank(trackingId)){
+            trackingId = UUID.randomUUID().toString();
+        }
+        httpHeaders.add(CommonConstant.X_TRACKING_ID, trackingId);
         return httpHeaders;
     }
 

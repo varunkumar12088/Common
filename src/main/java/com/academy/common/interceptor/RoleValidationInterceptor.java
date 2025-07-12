@@ -1,5 +1,6 @@
 package com.academy.common.interceptor;
 
+import com.academy.common.constant.CommonConstant;
 import com.academy.common.constant.UserRole;
 import com.academy.common.repository.UserRoleApiMapRepository;
 import jakarta.annotation.PostConstruct;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class RoleValidationInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleValidationInterceptor.class);;
-    private static final String ROLE_HEADER = "X-USER-ROLE";
+
 
     private static final Map<String, UserRole> METHOD_PATH_MAP = new HashMap<>();
 
@@ -40,7 +41,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         LOGGER.debug("RoleValidationInterceptor preHandle called for request: {}", request.getRequestURI());
-        String role = request.getHeader(ROLE_HEADER);
+        String role = request.getHeader(CommonConstant.ROLE_HEADER);
         if (StringUtils.isBlank(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
             return false;
