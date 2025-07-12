@@ -39,14 +39,15 @@ public abstract class AbstractRestClient {
 
     public HttpHeaders getHeaders(Map<String, String> headers) {
         HttpHeaders httpHeaders = new HttpHeaders();
+        // Add default headers if needed
+        httpHeaders.add(CommonConstant.CONTENT_TYPE, CommonConstant.APPLICATION_JSON);
+        httpHeaders.add(CommonConstant.ACCEPT, CommonConstant.APPLICATION_JSON);
+        // Add custom headers if provided
         if (!CollectionUtils.isEmpty(headers)){
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 httpHeaders.add(entry.getKey(), entry.getValue());
             }
         }
-        // Add default headers if needed
-        httpHeaders.add(CommonConstant.CONTENT_TYPE, CommonConstant.APPLICATION_JSON);
-        httpHeaders.add(CommonConstant.ACCEPT, CommonConstant.APPLICATION_JSON);
         String trackingId = MDC.get(CommonConstant.X_TRACKING_ID);
         if(StringUtils.isBlank(trackingId)){
             trackingId = UUID.randomUUID().toString();
