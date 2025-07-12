@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -24,6 +25,7 @@ public class TrackingIdInterceptor implements HandlerInterceptor {
             response.setHeader(CommonConstant.X_TRACKING_ID, trackingId);
         }
         request.setAttribute(CommonConstant.X_TRACKING_ID, trackingId);
+        MDC.put(CommonConstant.X_TRACKING_ID, trackingId);
         LOGGER.debug("Injected header {} with value {} into the request", CommonConstant.X_TRACKING_ID, trackingId);
         return true;
     }
