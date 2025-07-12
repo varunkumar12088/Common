@@ -7,11 +7,11 @@ import lombok.Data;
 @Builder
 public class ErrorResponse {
     private String message;
-    private String errorCode;
-    private String details;
+    private int errorCode;
+    private Object details;
     private String timestamp;
 
-    public ErrorResponse(String message, String errorCode, String details, String timestamp) {
+    public ErrorResponse(String message, int errorCode, Object details, String timestamp) {
         this.message = message;
         this.errorCode = errorCode;
         this.details = details;
