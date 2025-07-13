@@ -2,6 +2,7 @@ package com.academy.common.interceptor;
 
 import com.academy.common.constant.CommonConstant;
 import com.academy.common.constant.UserRole;
+import com.academy.common.entity.UserRoleApiMap;
 import com.academy.common.repository.UserRoleApiMapRepository;
 import com.academy.common.service.AllowedIPService;
 import com.academy.common.service.UserRoleApiSkipService;
@@ -26,7 +27,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoleValidationInterceptor.class);;
 
 
-    private static final Map<String, UserRole> METHOD_PATH_MAP = new HashMap<>();
+    private static final Map<String, UserRoleApiMap> METHOD_PATH_MAP = new HashMap<>();
 
     @Autowired
     private UserRoleApiMapRepository userRoleApiMapRepository;
@@ -42,7 +43,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
         // Load the user role API map from the repository
         userRoleApiMapRepository.findAll().forEach(mapping -> {
             String key = getKey(mapping.getPath(), mapping.getMethod());
-            METHOD_PATH_MAP.put(key, UserRole.from(mapping.getRole()));
+            METHOD_PATH_MAP.put(key, mapping);
         });
     }
 
@@ -61,17 +62,17 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             return false;
         }
         String key = getKey(uri, method);
-        UserRole requiredRole = METHOD_PATH_MAP.get(key);
-        if (ObjectUtils.isEmpty(requiredRole)) {
+        UserRoleApiMap userRoleApiMap = METHOD_PATH_MAP.get(key);
+        if (ObjectUtils.isEmpty(userRoleApiMap)) {
             return true;
         }
-        if (!UserRole.from(role).hasAccessTo(requiredRole)) {
+        if (!UserRole.from(role).hasAccessTo(UserRole.from(userRoleApiMap.getRole()))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to access this resource");
             return false;
         }
         // Check if the IP is allowed
         String clientIp = IPUtil.getClientIpAddress(request);
-        if (!allowedIPService.isIPAllowed(clientIp)) {
+        if (!userRoleApiMap.isPublicApi() && !allowedIPService.isIPAllowed(clientIp)) {
             LOGGER.warn("Access denied for IP: {}", clientIp);
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Your IP address is not allowed to access this resource");
             return false;
