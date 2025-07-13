@@ -3,6 +3,7 @@ package com.academy.common.event.bus;
 import com.academy.common.constant.CommonConstant;
 import com.academy.common.domain.Event;
 import com.academy.common.processor.chain.ProcessorChain;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +35,25 @@ public class BufferedEventBus {
         WORKER_POOL.submit(this::dispatchLoop);
     }
 
-    public void publish(Event event) {
+    public void publish(String type, Object data, String... headers){
+        Map<String, String> eventHeaders = new HashMap<>();
+        eventHeaders.put(CommonConstant.X_TRACKING_ID, MDC.get(CommonConstant.X_TRACKING_ID));
+        if(ArrayUtils.isNotEmpty(headers)){
+            for(int index = 0; index < headers.length; index += 2) {
+                if (index + 1 < headers.length) {
+                    eventHeaders.put(headers[index], headers[index + 1]);
+                } else {
+                    logger.warn("Header key without value: {}", headers[index]);
+                }
+            }
+        }
+
+        Event event = Event.builder()
+                .type(type)
+                .data(data)
+                .headers(eventHeaders)
+                .build();
+
         QUEUE.offer(event);
     }
 
