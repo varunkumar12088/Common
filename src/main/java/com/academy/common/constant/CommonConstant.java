@@ -1,5 +1,7 @@
 package com.academy.common.constant;
 
+import java.util.regex.Pattern;
+
 public interface CommonConstant {
 
     String X_TRACKING_ID = "X-Tracking-Id";
@@ -16,5 +18,8 @@ public interface CommonConstant {
     String HTTP_X_FORWARDED_FOR = "HTTP_X_FORWARDED_FOR";
     String UNKNOWN = "unknown";
 
-
+    String EMAIL_VALIDATION_REGEX = "^[a-zA-Z][0-9]?[a-zA-Z]?[0-9]?\\.@[a-zA-Z]+\\.[a-zA-Z]+$";
+    Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_VALIDATION_REGEX);
+    String PASSWORD_VALIDATION_REGEX = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+=\\-{}\\[\\]:;\"'<>,.?/]).{8,12}$";
+    Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_VALIDATION_REGEX);
 }

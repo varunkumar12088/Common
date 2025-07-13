@@ -2,10 +2,13 @@ package com.academy.common.constant;
 
 public enum UserRole {
 
-    STUDENT(1),
-    REVIEWER(2),
-    INSTRUCTOR(3),
-    ADMIN(4);
+    STUDENT(100),
+    REVIEWER(200),
+    INSTRUCTOR(300),
+
+    INTERNAL(1000),
+
+    ADMIN(Integer.MAX_VALUE);
 
     private final int level;
 
@@ -27,5 +30,14 @@ public enum UserRole {
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid role: " + roleStr);
         }
+    }
+
+    public static boolean isValidRole(String roleStr) {
+        for (UserRole role : UserRole.values()) {
+            if (role.name().equalsIgnoreCase(roleStr)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

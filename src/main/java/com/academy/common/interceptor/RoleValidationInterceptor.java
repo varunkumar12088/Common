@@ -61,11 +61,15 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
             return false;
         }
+
         String key = getKey(uri, method);
         UserRoleApiMap userRoleApiMap = METHOD_PATH_MAP.get(key);
-        if (ObjectUtils.isEmpty(userRoleApiMap)) {
+
+        // If no mapping found, check if the role is INTERNAL or ADMIN
+        if (ObjectUtils.isEmpty(userRoleApiMap) && StringUtils.equalsAnyIgnoreCase(role, UserRole.INTERNAL.name(), UserRole.ADMIN.name())) {
             return true;
         }
+        // If mapping found, check if the role has access
         if (!UserRole.from(role).hasAccessTo(UserRole.from(userRoleApiMap.getRole()))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to access this resource");
             return false;
