@@ -20,9 +20,6 @@ public abstract class AbstractRestClient {
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
-    public String getParameterizedPath() {
-        return "";
-    }
 
     public String getQueryPath(Map<String, String> queryParams) {
         if (!CollectionUtils.isEmpty(queryParams)) {
@@ -56,65 +53,60 @@ public abstract class AbstractRestClient {
         return httpHeaders;
     }
 
-    public String getFullUrl(Map<String, String> queryParams) {
-        return getBaseUrl() + getParameterizedPath() + getQueryPath(queryParams);
+
+    public Class<?> get(String uri, Class<?> classType){
+        return get(uri, classType, null);
+    }
+
+    public Class<?> get(String uri, Class<?> classType, Map<String, String> queryParams) {
+         return get(uri, classType, queryParams, null);
+    }
+
+    public Class<?> get(String uri, Class<?> classType, Map<String, String> queryParams, Map<String, String> headers) {
+
+        return doGenericCall(uri, classType, null, queryParams, headers, HttpMethod.GET);
+    }
+
+    public Class<?> post(String uri, Class<?> classType, Object body){
+        return post(uri, classType, body, null);
+    }
+
+    public Class<?> post(String uri, Class<?> classType, Object body, Map<String, String> queryParams) {
+        return post(uri, classType, body, queryParams, null);
+    }
+
+    public Class<?> post(String uri, Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
+        return doGenericCall(uri, classType, body, queryParams, headers, HttpMethod.POST);
+    }
+
+    public Class<?> put(String uri, Class<?> classType, Object body){
+        return put(uri, classType, body, null);
+    }
+    public Class<?> put(String uri, Class<?> classType, Object body, Map<String, String> queryParams) {
+        return put(uri, classType, body, queryParams, null);
+    }
+
+    public Class<?> put(String uri, Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
+        return doGenericCall(uri, classType, body, queryParams, headers, HttpMethod.PUT);
     }
 
 
-    public Class<?> get(Class<?> classType){
-        return get(classType, null);
+    public Class<?> patch(String uri, Class<?> classType, Object body){
+        return patch(uri, classType, body, null);
     }
 
-    public Class<?> get(Class<?> classType, Map<String, String> queryParams) {
-         return get(classType, queryParams, null);
+    public Class<?> patch(String uri, Class<?> classType, Object body, Map<String, String> queryParams) {
+        return patch(uri, classType, body, queryParams, null);
     }
 
-    public Class<?> get(Class<?> classType, Map<String, String> queryParams, Map<String, String> headers) {
-
-        return doGenericCall(classType, null, queryParams, headers, HttpMethod.GET);
-    }
-
-    public Class<?> post(Class<?> classType, Object body){
-        return post(classType, body, null);
-    }
-
-    public Class<?> post(Class<?> classType, Object body, Map<String, String> queryParams) {
-        return post(classType, body, queryParams, null);
-    }
-
-    public Class<?> post(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-        return doGenericCall(classType, body, queryParams, headers, HttpMethod.POST);
-    }
-
-    public Class<?> put(Class<?> classType, Object body){
-        return put(classType, body, null);
-    }
-    public Class<?> put(Class<?> classType, Object body, Map<String, String> queryParams) {
-        return put(classType, body, queryParams, null);
-    }
-
-    public Class<?> put(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-
-        return doGenericCall(classType, body, queryParams, headers, HttpMethod.PUT);
-    }
-
-
-    public Class<?> patch(Class<?> classType, Object body){
-        return patch(classType, body, null);
-    }
-
-    public Class<?> patch(Class<?> classType, Object body, Map<String, String> queryParams) {
-        return patch(classType, body, queryParams, null);
-    }
-
-    public Class<?> patch(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
-        return doGenericCall(classType, body, queryParams, headers, HttpMethod.PATCH);
+    public Class<?> patch(String uri, Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers) {
+        return doGenericCall(uri, classType, body, queryParams, headers, HttpMethod.PATCH);
     }
 
 
 
-    private Class<?> doGenericCall(Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers, HttpMethod httpMethod) {
-        String url = getFullUrl(queryParams);
+    private Class<?> doGenericCall(String uri, Class<?> classType, Object body, Map<String, String> queryParams, Map<String, String> headers, HttpMethod httpMethod) {
+        String url = this.getBaseUrl() + uri + this.getQueryPath(queryParams);
         if (StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("URL cannot be null or empty");
         }
