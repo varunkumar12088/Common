@@ -41,12 +41,15 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         LOGGER.debug("RoleValidationInterceptor preHandle called for request: {}", request.getRequestURI());
+        String uri = request.getRequestURI();
+        if(StringUtils.containsAny(uri, "login", "register", "registration", "forgot-password", "reset-password", "verify-email", "resend-email-verification")){
+            return true;
+        }
         String role = request.getHeader(CommonConstant.ROLE_HEADER);
         if (StringUtils.isBlank(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
             return false;
         }
-        String uri = request.getRequestURI();
         String method = request.getMethod();
         String key = getKey(uri, method);
         UserRole requiredRole = METHOD_PATH_MAP.get(key);
