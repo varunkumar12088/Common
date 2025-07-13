@@ -1,4 +1,4 @@
-package com.academy.common.domain;
+package com.academy.common.dto;
 
 import lombok.Builder;
 import lombok.Data;

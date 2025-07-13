@@ -1,6 +1,6 @@
 package com.academy.common.advice;
 
-import com.academy.common.domain.ErrorResponse;
+import com.academy.common.dto.ErrorResponse;
 import com.academy.common.exception.ArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

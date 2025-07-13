@@ -12,5 +12,6 @@ public class UserRoleApiMap {
     private String path;
     private String method;
     private String description;
+    private boolean isPublicApi;
 
 }

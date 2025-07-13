@@ -3,6 +3,9 @@ package com.academy.common.interceptor;
 import com.academy.common.constant.CommonConstant;
 import com.academy.common.constant.UserRole;
 import com.academy.common.repository.UserRoleApiMapRepository;
+import com.academy.common.service.AllowedIPService;
+import com.academy.common.service.UserRoleApiSkipService;
+import com.academy.common.util.IPUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +31,11 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     @Autowired
     private UserRoleApiMapRepository userRoleApiMapRepository;
 
+    @Autowired
+    private UserRoleApiSkipService userRoleApiSkipService;
+
+    @Autowired
+    private AllowedIPService allowedIPService;
 
     @PostConstruct
     public void init() {
@@ -42,7 +50,9 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         LOGGER.debug("RoleValidationInterceptor preHandle called for request: {}", request.getRequestURI());
         String uri = request.getRequestURI();
-        if(StringUtils.containsAny(uri, "login", "register", "registration", "forgot-password", "reset-password", "verify-email", "resend-email-verification")){
+        String method = request.getMethod();
+        LOGGER.debug("Checking access for URI: {}, Method: {}", uri, method);
+        if(userRoleApiSkipService.isApiSkipped(uri, request.getMethod())){
             return true;
         }
         String role = request.getHeader(CommonConstant.ROLE_HEADER);
@@ -50,15 +60,20 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
             return false;
         }
-        String method = request.getMethod();
         String key = getKey(uri, method);
         UserRole requiredRole = METHOD_PATH_MAP.get(key);
         if (ObjectUtils.isEmpty(requiredRole)) {
-            // If no specific role is required for this path and method, allow access
             return true;
         }
         if (!UserRole.from(role).hasAccessTo(requiredRole)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to access this resource");
+            return false;
+        }
+        // Check if the IP is allowed
+        String clientIp = IPUtil.getClientIpAddress(request);
+        if (!allowedIPService.isIPAllowed(clientIp)) {
+            LOGGER.warn("Access denied for IP: {}", clientIp);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Your IP address is not allowed to access this resource");
             return false;
         }
         LOGGER.debug("Role {} has access to path: {}, method: {}", role, uri, method);
