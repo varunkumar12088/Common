@@ -1,5 +1,6 @@
 package com.academy.common.config;
 
+import com.academy.common.interceptor.RequestLoggingInterceptor;
 import com.academy.common.interceptor.RoleValidationInterceptor;
 import com.academy.common.interceptor.TrackingIdInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private RoleValidationInterceptor roleValidationInterceptor;
 
+    @Autowired
+    private RequestLoggingInterceptor requestLoggingInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
@@ -23,6 +27,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(trackingIdInterceptor)
                 .addPathPatterns("/**");
 
+        // Register the requestLoggingInterceptor
+        registry.addInterceptor(requestLoggingInterceptor)
+                        .addPathPatterns("/**");
 
         // Register the RoleValidationInterceptor
         registry.addInterceptor(roleValidationInterceptor)

@@ -18,7 +18,7 @@ public class TrackingIdInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        LOGGER.debug("TrackingIdInterceptor preHandle called for request: {}", request.getRequestURI());
+
         String trackingId = request.getHeader(CommonConstant.X_TRACKING_ID);
         if (StringUtils.isBlank(trackingId)){
             trackingId = java.util.UUID.randomUUID().toString();
@@ -26,7 +26,7 @@ public class TrackingIdInterceptor implements HandlerInterceptor {
         }
         request.setAttribute(CommonConstant.X_TRACKING_ID, trackingId);
         MDC.put(CommonConstant.X_TRACKING_ID, trackingId);
-        LOGGER.debug("Injected header {} with value {} into the request", CommonConstant.X_TRACKING_ID, trackingId);
+
         return true;
     }
 }

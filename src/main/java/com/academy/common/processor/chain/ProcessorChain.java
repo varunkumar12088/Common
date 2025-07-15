@@ -13,8 +13,11 @@ public class ProcessorChain<T> {
 
     // Logger
     private static final Logger logger = LoggerFactory.getLogger(ProcessorChain.class);
-    @Autowired
-    private List<Processor<T>> processors;
+    private final List<Processor<T>> processors;
+
+    public ProcessorChain(@Autowired(required = false) List<Processor<T>> processors) {
+        this.processors = processors == null ? List.of() : processors;
+    }
 
     public void process(T event) {
         if (event == null) {
