@@ -1,6 +1,7 @@
 package com.academy.common.interceptor;
 
 import com.academy.common.constant.CommonConstant;
+import com.academy.common.util.IPUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,8 @@ public class TrackingIdInterceptor implements HandlerInterceptor {
         }
         request.setAttribute(CommonConstant.X_TRACKING_ID, trackingId);
         MDC.put(CommonConstant.X_TRACKING_ID, trackingId);
+        String clientIp = IPUtil.getClientIpAddress(request);
+        MDC.put(CommonConstant.X_CLIENT_IP, clientIp);
 
         return true;
     }
