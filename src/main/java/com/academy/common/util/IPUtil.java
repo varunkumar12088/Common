@@ -10,7 +10,7 @@ public class IPUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IPUtil.class);
 
-
+    private static final String COMMA = ",";
 
     public static String getClientIpAddress(HttpServletRequest request) {
         LOGGER.debug("Extracting client IP address from request headers.");
@@ -29,8 +29,8 @@ public class IPUtil {
         if (StringUtils.isBlank(ip) || CommonConstant.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        if (StringUtils.isNotBlank(ip) && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
+        if (StringUtils.isNotBlank(ip) && ip.contains(COMMA)) {
+            ip = ip.split(COMMA)[0].trim();
         }
 
 

@@ -7,6 +7,7 @@ import com.academy.common.repository.UserRoleApiMapRepository;
 import com.academy.common.service.AllowedIPService;
 import com.academy.common.service.UserRoleApiSkipService;
 import com.academy.common.util.IPUtil;
+import com.academy.common.util.KeyUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,7 +44,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
     public void init() {
         // Load the user role API map from the repository
         userRoleApiMapRepository.findAll().forEach(mapping -> {
-            String key = getKey(mapping.getPath(), mapping.getMethod());
+            String key = KeyUtil.userRoleApiMapKey(mapping.getPath(), mapping.getMethod());
             METHOD_PATH_MAP.put(key, mapping);
         });
     }
@@ -65,7 +66,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        String key = getKey(uri, method);
+        String key = KeyUtil.userRoleApiMapKey(uri, method);
         UserRoleApiMap userRoleApiMap = METHOD_PATH_MAP.get(key);
 
         // If no mapping found, check if the role is INTERNAL or ADMIN
@@ -88,7 +89,4 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    private String getKey(String path, String method) {
-        return path + ":" + method;
-    }
 }
