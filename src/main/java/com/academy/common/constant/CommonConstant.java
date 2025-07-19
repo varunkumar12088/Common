@@ -26,6 +26,8 @@ public interface CommonConstant {
 
     String ENCRYPTION_KEY = "";
     String ENCRYPTION_KEY_ID = "encryption.key";
-
+    String PASSWORD = "password";
+    String DEFAULT_PASSWORD = "**********";
+    String ENCRYPTED = "encrypted";
 
 }

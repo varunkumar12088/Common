@@ -1,7 +1,9 @@
 package com.academy.common.interceptor;
 
+import com.academy.common.constant.CommonConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,10 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request,
+                             @NonNull HttpServletResponse response,
+                             @NonNull Object handler) throws Exception {
+
         String httpMethod = request.getMethod();
         if(StringUtils.equalsAnyIgnoreCase(httpMethod, RequestMethod.GET.name(), RequestMethod.DELETE.name())) {
 
@@ -34,17 +39,17 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
                 while (paramNames.hasMoreElements()) {
                     String param = paramNames.nextElement();
                     String value = request.getParameter(param);
-                    if (param.toLowerCase().contains("password")) {
-                        value = "******";
+                    if (param.toLowerCase().contains(CommonConstant.PASSWORD)) {
+                        value = CommonConstant.DEFAULT_PASSWORD;
                     }
                     paramLog.append(param).append("=").append(value).append("&");
                 }
 
-                if (paramLog.length() > 0) {
+                if (!paramLog.isEmpty()) {
                     paramLog.setLength(paramLog.length() - 1);
                 }
 
-                if (paramLog.length() > 0) {
+                if (!paramLog.isEmpty()) {
                     LOGGER.debug("Before controller: [{} {}] {} - params: [{}]", httpMethod, requestURI, fullMethod, paramLog);
                 } else {
                     LOGGER.debug("Before controller: [{} {}] {}", httpMethod, requestURI, fullMethod);
