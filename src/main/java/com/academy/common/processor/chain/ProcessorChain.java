@@ -29,7 +29,6 @@ public class ProcessorChain<T> {
             if (processor.canProcess(event)) {
                 logger.info("Processor {} can process event: {}", processor.getClass().getSimpleName(), event);
                 processor.process(event);
-                return;
             }
         }
     }

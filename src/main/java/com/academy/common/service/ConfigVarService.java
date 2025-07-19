@@ -6,8 +6,8 @@ public interface ConfigVarService<T, ID extends Serializable> {
 
     void save(T t);
     <T> T getConfigVar(ID id);
-    <T> T getConfigVar(ID id, Class<T> valueType);
-    <T> T getConfigVar(ID id, Class<T> valueType, T defaultValue);
+    <T> T getConfigVarValue(ID id, Class<T> valueType);
+    <T> T getConfigVarValue(ID id, Class<T> valueType, T defaultValue);
 
 
 }

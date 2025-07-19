@@ -2,19 +2,17 @@ package com.academy.common.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
 
 public class AESUtil {
 
     private static final String ALGORITHM = "AES";
-    private static final String SECRET_KEY;
-    static {
-        SECRET_KEY = System.getenv("AES_SECRET_KEY");
-    }
 
-    public static String encrypt(String value) {
+    public static String encrypt(String value, String encryptionKey) {
         try {
-            SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+            SecretKeySpec keySpec = new SecretKeySpec(encryptionKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec);
             byte[] encrypted = cipher.doFinal(value.getBytes());
@@ -24,9 +22,9 @@ public class AESUtil {
         }
     }
 
-    public static String decrypt(String encrypted) {
+    public static String decrypt(String encrypted, String encryptionKey) {
         try {
-            SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+            SecretKeySpec keySpec = new SecretKeySpec(encryptionKey.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, keySpec);
             byte[] original = cipher.doFinal(Base64.getDecoder().decode(encrypted));

@@ -56,7 +56,7 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
         if(userRoleApiSkipService.isApiSkipped(uri, request.getMethod())){
             return true;
         }
-        String role = request.getHeader(CommonConstant.ROLE_HEADER);
+        String role = request.getHeader(CommonConstant.X_USER_ROLE);
         if (StringUtils.isBlank(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing");
             return false;

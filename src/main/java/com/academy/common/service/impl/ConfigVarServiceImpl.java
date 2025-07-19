@@ -1,12 +1,14 @@
 package com.academy.common.service.impl;
 
 
+import com.academy.common.constant.CommonConstant;
 import com.academy.common.entity.ConfigVar;
 import com.academy.common.exception.DataLayerException;
 import com.academy.common.exception.DataNotFoundException;
 import com.academy.common.repository.ConfigVarRepository;
 import com.academy.common.service.ConfigVarService;
 import com.academy.common.util.AESUtil;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +26,17 @@ public class ConfigVarServiceImpl implements ConfigVarService<ConfigVar, String>
 
     @Autowired
     private ConfigVarRepository configVarRepository;
+    private String encryptionKey;
 
+    @PostConstruct
+    public void init(){
+        Optional<ConfigVar> configVarOptional = configVarRepository.findById(CommonConstant.ENCRYPTION_KEY_ID);
+        if(configVarOptional.isEmpty()){
+            this.encryptionKey = CommonConstant.ENCRYPTION_KEY;
+            return;
+        }
+        this.encryptionKey = (String) configVarOptional.get().getValue();
+    }
 
     @Override
     public void save(ConfigVar configVar) {
@@ -32,7 +44,7 @@ public class ConfigVarServiceImpl implements ConfigVarService<ConfigVar, String>
         validation(configVar);
         if (configVar.isEncrypted()) {
             try {
-                configVar.setValue(AESUtil.encrypt((String) configVar.getValue()));
+                configVar.setValue(AESUtil.encrypt((String) configVar.getValue(), this.encryptionKey));
             } catch (Exception e) {
                 LOGGER.error("Failed to encrypt value: {}", configVar.getValue(), e);
                 throw new DataLayerException("Failed to encrypt value: " + configVar.getValue(), e);
@@ -45,21 +57,21 @@ public class ConfigVarServiceImpl implements ConfigVarService<ConfigVar, String>
     @Override
     public <T> T getConfigVar(String id) {
         LOGGER.debug("Fetching config variable with id: {}", id);
-        Optional<ConfigVar> configVar = configVarRepository.findById(id);
-        if (configVar.isPresent()) {
-            LOGGER.debug("Config variable found: {}", configVar.get());
-            return (T) configVar.get();
+        Optional<ConfigVar> configVarOptional = configVarRepository.findById(id);
+        if (configVarOptional.isPresent()) {
+            LOGGER.debug("Config variable found: {}", configVarOptional.get());
+            return (T) configVarOptional.get();
         }
         throw new DataNotFoundException("Configuration is not available at " + id);
     }
 
     @Override
-    public <T> T getConfigVar(String id, Class<T> valueType) {
-        return getConfigVar(id, valueType, null);
+    public <T> T getConfigVarValue(String id, Class<T> valueType) {
+        return getConfigVarValue(id, valueType, null);
     }
 
     @Override
-    public <T> T getConfigVar(String id, Class<T> valueType, T defaultValue) {
+    public <T> T getConfigVarValue(String id, Class<T> valueType, T defaultValue) {
         ConfigVar configVar = this.getConfigVar(id);
         if(ObjectUtils.isNotEmpty(configVar) && ObjectUtils.isNotEmpty(configVar.getValue()) && valueType != null){
             try {
@@ -76,7 +88,7 @@ public class ConfigVarServiceImpl implements ConfigVarService<ConfigVar, String>
         try {
             // If the value is encrypted, decrypt it before casting
             if (configVar.isEncrypted()) {
-                return valueType.cast(AESUtil.decrypt((String)configVar.getValue()));
+                return valueType.cast(AESUtil.decrypt((String)configVar.getValue(), this.encryptionKey));
             }
             return valueType.cast(configVar.getValue());
         } catch (Exception e) {

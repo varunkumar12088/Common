@@ -5,9 +5,10 @@ import java.util.regex.Pattern;
 public interface CommonConstant {
 
     String X_TRACKING_ID = "X-Tracking-Id";
-    String ROLE_HEADER = "X-USER-ROLE";
+    String X_USER_ROLE = "X-USER-ROLE";
     String X_CLIENT_IP = "X-CLIENT-IP";
     String X_USER_EMAIL = "X-USER-EMAIL";
+    String X_USER_NAME = "X-USER-NAME";
     String CONTENT_TYPE = "Content-Type";
     String APPLICATION_JSON = "application/json";
     String ACCEPT = "Accept";
@@ -22,4 +23,9 @@ public interface CommonConstant {
     Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_VALIDATION_REGEX);
     String PASSWORD_VALIDATION_REGEX = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+=\\-{}\\[\\]:;\"'<>,.?/]).{8,12}$";
     Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_VALIDATION_REGEX);
+
+    String ENCRYPTION_KEY = "";
+    String ENCRYPTION_KEY_ID = "encryption.key";
+
+
 }
