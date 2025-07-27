@@ -61,16 +61,19 @@ public class BufferedEventBus {
     private void dispatchLoop() {
         while (true) {
             try {
-                Event event = QUEUE.take();
-                if (ObjectUtils.isNotEmpty(event)) {
-                    String trackingId = event.getHeaders().get(CommonConstant.X_TRACKING_ID);
-                    if(StringUtils.isBlank(trackingId)) {
-                        trackingId = UUID.randomUUID().toString();
+                if(!QUEUE.isEmpty()){
+                    Event event = QUEUE.take();
+                    if (ObjectUtils.isNotEmpty(event)) {
+                        String trackingId = event.getHeaders().get(CommonConstant.X_TRACKING_ID);
+                        if(StringUtils.isBlank(trackingId)) {
+                            trackingId = UUID.randomUUID().toString();
+                        }
+                        MDC.put(CommonConstant.X_TRACKING_ID, trackingId);
+                        logger.info("Processing event: {}", event.getType());
+                        processorChain.process(event);
                     }
-                    MDC.put(CommonConstant.X_TRACKING_ID, trackingId);
-                    logger.info("Processing event: {}", event.getType());
-                    processorChain.process(event);
                 }
+
             } catch (InterruptedException e) {
                 logger.error("Event dispatch loop interrupted", e);
             } catch (Exception ex) {
