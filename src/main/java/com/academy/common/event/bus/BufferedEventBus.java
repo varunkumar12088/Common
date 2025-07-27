@@ -4,6 +4,7 @@ import com.academy.common.constant.CommonConstant;
 import com.academy.common.domain.Event;
 import com.academy.common.processor.chain.ProcessorChain;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ public class BufferedEventBus {
 
     private static final BlockingQueue<Event> QUEUE = new LinkedBlockingQueue<>();
     private static final ExecutorService WORKER_POOL = Executors.newSingleThreadExecutor();
-    private volatile boolean running = true;
 
     public BufferedEventBus() {
         WORKER_POOL.submit(this::dispatchLoop);
@@ -54,14 +54,15 @@ public class BufferedEventBus {
                 .headers(eventHeaders)
                 .build();
 
-        QUEUE.offer(event);
+        boolean isPushed = QUEUE.offer(event);
+        logger.debug("is event {} pushed to queue {}", event, isPushed);
     }
 
     private void dispatchLoop() {
-        while (running) {
+        while (true) {
             try {
                 Event event = QUEUE.take();
-                if (event != null) {
+                if (ObjectUtils.isNotEmpty(event)) {
                     String trackingId = event.getHeaders().get(CommonConstant.X_TRACKING_ID);
                     if(StringUtils.isBlank(trackingId)) {
                         trackingId = UUID.randomUUID().toString();
