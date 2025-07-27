@@ -6,6 +6,8 @@ public interface Processor<T> {
 
     void process(T event);
 
-
+    default int order(){
+        return 1;
+    }
 
 }
